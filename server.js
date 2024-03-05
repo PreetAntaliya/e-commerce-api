@@ -1,6 +1,7 @@
 const express = require("express");
 const port = 8000;
 const app = express();
+const jwt = require('jsonwebtoken');
 const db = require('./config/db')
 
 app.use(express.json());

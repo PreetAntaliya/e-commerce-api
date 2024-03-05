@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const userModel = require("../models/User");
 
 const createUser = async (req, res) => {
@@ -52,23 +53,75 @@ const createUser = async (req, res) => {
   }
 };
 
-const allUser = async(req,res) => {
-      try{
-        let Users = await userModel.find({});
-        return res.status(200).send({
-            success : true,
-            message : "all users finded...",
-            Users
-        })
-    }catch(err){
-        return res.status(503).send({
-            success : false,
-            message : err
-        })
+const allUser = async (req, res) => {
+  try {
+    let Users = await userModel.find({});
+    return res.status(200).send({
+      success: true,
+      message: "all users finded...",
+      Users,
+    });
+  } catch (err) {
+    return res.status(503).send({
+      success: false,
+      message: err,
+    });
+  }
+};
+
+const login = async (req, res) => {
+  try {
+    let email = req.body.email;
+    let password = req.body.password;
+    let user = await userModel.findOne({ email: email });
+    if (!user || user.password != password) {
+      return res.status(503).send({
+        success: false,
+        message: "Email and password not valid",
+      });
     }
-}
+    let token = jwt.sign({ payload: user }, "abc", { expiresIn: "1hr" });
+    return res.status(200).send({
+      success: true,
+      message: "Token is here",
+      token,
+    });
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    let email = req.body.email;
+    let password = req.body.password;
+    let cpassword = req.body.cpassword;
+    if (password === cpassword) {
+      let user = await userModel.findOneAndUpdate(
+        { email: email },
+        {
+          password,
+        }
+      );
+      return res.status(200).send({
+        success: true,
+        message: "password updated",
+      });
+    }
+    return res.status(200).send({
+      success: false,
+      message: "password and confirm password not same",
+    });
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};
 
 module.exports = {
   createUser,
-  allUser
+  allUser,
+  login,
+  changePassword,
 };

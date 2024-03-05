@@ -9,7 +9,7 @@ const verifyToken = async(req,res,next) => {
             }) 
         }
         let newToken = token.split(" ")[1];
-        jwt.verify(newToken,'rnw4',(err,decode)=>{
+        jwt.verify(newToken,'abc',(err,decode)=>{
             if(err){
                 return res.status(503).send({ 
                     success : false,
@@ -26,11 +26,12 @@ const verifyToken = async(req,res,next) => {
     }
 }
 const roleBaseAuth = (role)=>{
+
     return (req,res,next) => { 
         if(!role.includes(req.user.payload.role)){
             return res.status(200).send({ 
                 success : false,
-                message : "Only admin access" 
+                message : "Only admin access " + req.user.email
             }) 
         }
         return  next();
