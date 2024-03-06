@@ -21,8 +21,9 @@ const viewProduct = async (req, res) => {
 const addProduct = async (req, res) => {
   try {
     const {categoryId,subcategoryId,product_name,product_price,product_qty,product_description,status} = req.body;
+    const productImg = req.files.map(file => file.path)
 
-    if (!categoryId || !subcategoryId || !product_name || !product_price || !product_qty || !product_description) {
+    if (!categoryId || !subcategoryId || !product_name || !product_price || !product_qty || !product_description || !productImg) {
       return res.status(400).json({
         success: false,
         message: "All field is required",
@@ -32,6 +33,7 @@ const addProduct = async (req, res) => {
       categoryId,
       subcategoryId,
       product_name,
+      productImg ,
       product_price,
       product_qty,
       product_description,
@@ -119,6 +121,7 @@ const productUpdate = async (req, res) => {
         categoryId,
         subcategoryId,
         product_name,
+        productImg : req.files.path,
         product_price,
         product_qty,
         product_description,
